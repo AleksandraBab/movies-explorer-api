@@ -1,2 +1,3 @@
-# movies-explorer-api
-backend for movie-catalogue-app
+# Бекэнд для сервиса по поиску фильмов
+
+обратиться к серверу: 
