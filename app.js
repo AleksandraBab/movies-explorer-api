@@ -14,8 +14,8 @@ const { ratelimiter } = require('./utils/ratelimiter');
 const mainRouter = require('./routes/index');
 
 const allowedCors = [
-  'localhost:3001',
-  'http://localhost:3001',
+  'localhost:3000',
+  'http://localhost:3000',
 ];
 const limiter = rateLimit(ratelimiter);
 const { PORT = 3000 } = process.env;
