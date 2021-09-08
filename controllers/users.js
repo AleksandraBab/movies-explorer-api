@@ -113,23 +113,34 @@ module.exports.getCurrentUser = (req, res, next) => {
 module.exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
 
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, email },
-    {
-      new: true,
-      runValidators: true,
-      upsert: false,
-    },
-  )
-    .orFail(() => {
-      next(new NotFoundError(ERROR_MESSAGE_USERNOTFOUND));
-    })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError(ERROR_MESSAGE_INVALID));
+  User.findOne({ email: email })
+    .then((user) => {
+      if (user) {
+        const err = new Error(ERROR_MESSAGE_409);
+        err.statusCode = ERROR_CODE_409;
+        next(err);
       }
+      User.findByIdAndUpdate(
+        req.user._id,
+        { name, email },
+        {
+          new: true,
+          runValidators: true,
+          upsert: false,
+        },
+      )
+        .orFail(() => {
+          next(new NotFoundError(ERROR_MESSAGE_USERNOTFOUND));
+        })
+        .then((user) => res.send(user))
+        .catch((err) => {
+          if (err.name === 'CastError' || err.name === 'ValidationError') {
+            next(new ValidationError(ERROR_MESSAGE_INVALID));
+          }
+          next();
+        });
+    })
+    .catch(() => {
       next();
     });
 };
