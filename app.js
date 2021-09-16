@@ -18,7 +18,7 @@ const allowedCors = [
   'http://localhost:3000',
 ];
 const limiter = rateLimit(ratelimiter);
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());

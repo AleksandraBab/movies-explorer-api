@@ -75,15 +75,16 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) {
             next(new UnauthorizedError(ERROR_MESSAGE_AUTHORIZATION));
-          }
-          const token = jwt.sign(
-            { _id: user._id },
-            NODE_ENV === 'production' ? JWT_SECRET : JWT,
-            { expiresIn: '7d' },
-          );
+          } else {
+            const token = jwt.sign(
+              { _id: user._id },
+              NODE_ENV === 'production' ? JWT_SECRET : JWT,
+              { expiresIn: '7d' },
+            );
 
-          res
-            .send({ token });
+            res
+              .send({ token });
+          }
         })
         .catch(() => {
           next();
@@ -112,13 +113,19 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 module.exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
+  const userId = req.user._id;
 
   User.findOne({ email: email })
     .then((user) => {
       if (user) {
-        const err = new Error(ERROR_MESSAGE_409);
-        err.statusCode = ERROR_CODE_409;
-        next(err);
+        User.findById(userId)
+          .then(me => {
+            if ( me._id.toString() !== user._id.toString()) {
+              const err = new Error(ERROR_MESSAGE_409);
+              err.statusCode = ERROR_CODE_409;
+              next(err);
+            }
+          })
       }
       User.findByIdAndUpdate(
         req.user._id,
