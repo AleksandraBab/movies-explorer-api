@@ -9,7 +9,8 @@ const {
 } = require('../utils/constans');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  const userId = req.user._id;
+  Movie.find({ owner: userId })
     .then((movies) => res.status(200).send(movies))
     .catch(next);
 };
