@@ -14,8 +14,11 @@ const { ratelimiter } = require('./utils/ratelimiter');
 const mainRouter = require('./routes/index');
 
 const allowedCors = [
-  'localhost:3000',
   'http://localhost:3000',
+  'http://capibara-movies.nomoredomains.club',
+  'https://capibara-movies.nomoredomains.club',
+  'http://capibara-movies.nomoredomains.club/',
+  'https://capibara-movies.nomoredomains.club/',
 ];
 const limiter = rateLimit(ratelimiter);
 const { PORT = 3001 } = process.env;
